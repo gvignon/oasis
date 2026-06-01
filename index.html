@@ -1,0 +1,1860 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Le Phare Numérique - Oasis de Château-Landon</title>
+  <meta name="description" content="Le Phare Numérique d'un tiers-lieu bucolique à Château-Landon : présences, saisons, entraide et convivialité.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <style>
+    /*
+      PALETTE DU LIEU
+      Modifie ces variables pour ajuster toute la charte graphique.
+    */
+    :root {
+      --sapin: #173f2a;
+      --sapin-clair: #2f6b47;
+      --terracotta: #b96745;
+      --creme: #f6f0df;
+      --creme-chaud: #fff9ea;
+      --anthracite: #262622;
+      --mousse: #dce8c8;
+      --terre: #73523f;
+      --ligne: rgba(38, 38, 34, 0.15);
+      --ombre: 0 18px 42px rgba(23, 63, 42, 0.14);
+      --radius: 8px;
+      --largeur: 1120px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--anthracite);
+      background: var(--creme);
+      line-height: 1.6;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .page-shell {
+      overflow: hidden;
+    }
+
+    .section {
+      padding: 72px 20px;
+    }
+
+    .section:nth-of-type(even) {
+      background: var(--creme-chaud);
+    }
+
+    .container {
+      width: min(100%, var(--largeur));
+      margin: 0 auto;
+    }
+
+    .section-kicker {
+      margin: 0 0 8px;
+      color: var(--terracotta);
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      line-height: 1.08;
+      color: var(--sapin);
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.7rem, 9vw, 6.7rem);
+      font-weight: 500;
+    }
+
+    h2 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2rem, 5vw, 3.7rem);
+      font-weight: 500;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 1.15rem;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .lead {
+      max-width: 720px;
+      margin-top: 18px;
+      color: rgba(38, 38, 34, 0.82);
+      font-size: clamp(1.05rem, 2vw, 1.28rem);
+    }
+
+    .hero {
+      min-height: 92svh;
+      display: grid;
+      align-items: center;
+      padding: 32px 20px 56px;
+      background:
+        linear-gradient(90deg, rgba(246, 240, 223, 0.95), rgba(246, 240, 223, 0.74) 52%, rgba(246, 240, 223, 0.38)),
+        url("images/IMG-20250807-WA0001.jpg") center/cover;
+      border-bottom: 1px solid var(--ligne);
+    }
+
+    .hero-inner {
+      width: min(100%, var(--largeur));
+      margin: 0 auto;
+    }
+
+    .nav {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      width: min(calc(100% - 40px), var(--largeur));
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transform: translateX(-50%);
+      color: var(--sapin);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+    }
+
+    .nav-links a:hover {
+      border-color: currentColor;
+    }
+
+    .brand {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 12px;
+      height: 12px;
+      background: var(--terracotta);
+      border-radius: 999px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      margin-top: 34px;
+    }
+
+    .lighthouse-button {
+      display: inline-flex;
+      min-height: 52px;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 18px;
+      color: var(--creme-chaud);
+      background: var(--sapin);
+      border: 0;
+      border-radius: var(--radius);
+      cursor: pointer;
+      box-shadow: var(--ombre);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .lighthouse-button:hover {
+      transform: translateY(-2px);
+      background: #0f301f;
+    }
+
+    .lighthouse-button:disabled {
+      cursor: default;
+      opacity: 1;
+    }
+
+    .lighthouse-button:disabled:hover {
+      transform: none;
+      background: var(--sapin);
+    }
+
+    .lighthouse-button.is-off {
+      background: var(--anthracite);
+    }
+
+    .lighthouse-button.is-off:disabled:hover {
+      background: var(--anthracite);
+    }
+
+    .beacon-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: #b5f08d;
+      box-shadow: 0 0 0 rgba(181, 240, 141, 0.9);
+      animation: pulse 1.55s ease-in-out infinite;
+    }
+
+    .lighthouse-button.is-off .beacon-dot {
+      background: #817f76;
+      animation: none;
+      box-shadow: none;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(181, 240, 141, 0.7); }
+      70% { box-shadow: 0 0 0 12px rgba(181, 240, 141, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(181, 240, 141, 0); }
+    }
+
+    .ghost-link {
+      min-height: 52px;
+      display: inline-flex;
+      align-items: center;
+      padding: 12px 16px;
+      color: var(--sapin);
+      border: 1px solid rgba(23, 63, 42, 0.28);
+      border-radius: var(--radius);
+      background: rgba(255, 249, 234, 0.62);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .hero-note {
+      max-width: 530px;
+      margin-top: 22px;
+      color: rgba(38, 38, 34, 0.75);
+      font-size: 0.98rem;
+    }
+
+    .section-heading {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(280px, 0.7fr);
+      gap: 32px;
+      align-items: end;
+      margin-bottom: 34px;
+    }
+
+    .oasis-quote {
+      margin: 0;
+      padding: 0;
+      border: none;
+      font-family: Georgia, "Times New Roman", serif;
+      font-style: italic;
+      font-size: clamp(1.15rem, 2.2vw, 1.6rem);
+      line-height: 1.5;
+      color: var(--sapin);
+    }
+
+    .oasis-quote p {
+      margin: 0 0 14px;
+    }
+
+    .oasis-quote footer {
+      font-size: 0.88rem;
+      font-style: normal;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      color: var(--terracotta);
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .oasis-quote cite {
+      font-style: italic;
+    }
+
+    .oasis-intro-col {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .oasis-portrait {
+      width: 100%;
+      height: auto;
+      border-radius: var(--radius);
+      display: block;
+      box-shadow: var(--ombre);
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .terrain-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .terrain-card,
+    .exchange-card,
+    .charter-card,
+    .seed-box,
+    .calendar-panel,
+    .visit-panel {
+      background: rgba(255, 249, 234, 0.82);
+      border: 1px solid var(--ligne);
+      border-radius: var(--radius);
+      box-shadow: var(--ombre);
+    }
+
+    .terrain-card {
+      min-height: 245px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+    }
+
+    .terrain-number {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 22px;
+      color: var(--creme-chaud);
+      background: var(--terracotta);
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
+    .terrain-card p {
+      color: rgba(38, 38, 34, 0.78);
+      font-size: 0.96rem;
+    }
+
+    .calendar-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(310px, 0.75fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .calendar-panel,
+    .visit-panel {
+      padding: 20px;
+    }
+
+    .calendar-toolbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .calendar-title {
+      color: var(--sapin);
+      font-size: 1.25rem;
+      font-weight: 800;
+      text-transform: capitalize;
+    }
+
+    .icon-button {
+      width: 42px;
+      height: 42px;
+      display: inline-grid;
+      place-items: center;
+      color: var(--sapin);
+      background: var(--mousse);
+      border: 1px solid rgba(23, 63, 42, 0.16);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 900;
+    }
+
+    .calendar-admin {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      padding: 12px;
+      background: rgba(220, 232, 200, 0.52);
+      border: 1px solid rgba(23, 63, 42, 0.12);
+      border-radius: var(--radius);
+    }
+
+    .toggle {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .toggle input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--sapin);
+    }
+
+    .calendar-weekdays,
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .calendar-weekdays {
+      margin-bottom: 8px;
+      color: rgba(38, 38, 34, 0.62);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .day-button {
+      position: relative;
+      min-height: 74px;
+      padding: 9px;
+      color: var(--anthracite);
+      background: #fffdf4;
+      border: 1px solid var(--ligne);
+      border-radius: var(--radius);
+      cursor: pointer;
+      text-align: left;
+      transition: border 0.2s ease, transform 0.2s ease, background 0.2s ease;
+    }
+
+    .day-button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(23, 63, 42, 0.42);
+    }
+
+    .day-button.is-empty {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .day-button.is-present {
+      background: #dcefd0;
+      border-color: rgba(47, 107, 71, 0.55);
+    }
+
+    .day-button.is-selected {
+      outline: 3px solid rgba(185, 103, 69, 0.36);
+    }
+
+    .day-button.is-today::after {
+      content: "";
+      position: absolute;
+      right: 8px;
+      top: 8px;
+      width: 8px;
+      height: 8px;
+      background: var(--terracotta);
+      border-radius: 999px;
+    }
+
+    .day-number {
+      display: block;
+      font-weight: 900;
+    }
+
+    .day-status {
+      display: block;
+      margin-top: 10px;
+      color: rgba(38, 38, 34, 0.7);
+      font-size: 0.74rem;
+      font-weight: 800;
+    }
+
+    .visits-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .visit-pill {
+      display: block;
+      overflow: hidden;
+      color: var(--sapin);
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: rgba(38, 38, 34, 0.78);
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 12px;
+      color: var(--anthracite);
+      background: #fffdf4;
+      border: 1px solid rgba(38, 38, 34, 0.18);
+      border-radius: var(--radius);
+    }
+
+    textarea {
+      min-height: 112px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: 3px solid rgba(185, 103, 69, 0.22);
+      border-color: var(--terracotta);
+    }
+
+    .submit-button {
+      min-height: 48px;
+      padding: 12px 16px;
+      color: var(--creme-chaud);
+      background: var(--terracotta);
+      border: 0;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 850;
+    }
+
+    .submit-button:disabled {
+      cursor: not-allowed;
+      opacity: 0.46;
+    }
+
+    .small-note {
+      color: rgba(38, 38, 34, 0.68);
+      font-size: 0.9rem;
+    }
+
+    .message {
+      min-height: 24px;
+      color: var(--sapin);
+      font-weight: 800;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .exchange-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .exchange-card {
+      padding: 24px;
+    }
+
+    .exchange-list {
+      display: grid;
+      gap: 12px;
+      margin: 18px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .exchange-list li {
+      padding-left: 22px;
+      position: relative;
+    }
+
+    .exchange-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.72em;
+      width: 8px;
+      height: 8px;
+      background: var(--terracotta);
+      border-radius: 999px;
+    }
+
+    .charter-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .charter-card {
+      padding: 22px;
+    }
+
+    .charter-card p {
+      color: rgba(38, 38, 34, 0.76);
+    }
+
+    .seed-box {
+      display: grid;
+      grid-template-columns: minmax(0, 0.8fr) minmax(260px, 1fr);
+      gap: 24px;
+      align-items: center;
+      padding: 26px;
+      background: linear-gradient(135deg, rgba(255, 249, 234, 0.96), rgba(220, 232, 200, 0.82));
+    }
+
+    .seed-placeholder {
+      min-height: 180px;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      color: rgba(38, 38, 34, 0.58);
+      border: 1px dashed rgba(23, 63, 42, 0.38);
+      border-radius: var(--radius);
+      text-align: center;
+    }
+
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .photo-thumb {
+      aspect-ratio: 1;
+      overflow: hidden;
+      border-radius: var(--radius);
+      border: 1px solid var(--ligne);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .photo-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+      -webkit-user-drag: none;
+    }
+
+    @media (max-width: 920px) {
+      .photo-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 560px) {
+      .photo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+
+    .acces-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 8px;
+    }
+
+    .acces-card {
+      background: rgba(255, 249, 234, 0.82);
+      border: 1px solid var(--ligne);
+      border-radius: var(--radius);
+      box-shadow: var(--ombre);
+      padding: 24px;
+    }
+
+    .acces-icon {
+      font-size: 2rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .acces-card h3 {
+      margin-bottom: 14px;
+    }
+
+    .acces-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .acces-list li {
+      padding-left: 22px;
+      position: relative;
+      color: rgba(38, 38, 34, 0.82);
+      font-size: 0.96rem;
+    }
+
+    .acces-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.72em;
+      width: 8px;
+      height: 8px;
+      background: var(--sapin-clair);
+      border-radius: 999px;
+    }
+
+    .acces-note {
+      margin-top: 20px;
+      padding: 14px 18px;
+      background: rgba(220, 232, 200, 0.52);
+      border: 1px solid rgba(23, 63, 42, 0.12);
+      border-radius: var(--radius);
+      color: rgba(38, 38, 34, 0.78);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 680px) {
+      .acces-grid { grid-template-columns: 1fr; }
+    }
+
+    .activites-details {
+      background: rgba(255, 249, 234, 0.82);
+      border: 1px solid var(--ligne);
+      border-radius: var(--radius);
+      box-shadow: var(--ombre);
+      overflow: hidden;
+    }
+
+    .activites-summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      cursor: pointer;
+      list-style: none;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--sapin);
+      user-select: none;
+    }
+
+    .activites-summary::-webkit-details-marker { display: none; }
+
+    .activites-summary::after {
+      content: "›";
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--terracotta);
+      transition: transform 0.25s ease;
+      flex-shrink: 0;
+    }
+
+    .activites-details[open] .activites-summary::after {
+      transform: rotate(90deg);
+    }
+
+    .activites-body {
+      padding: 0 24px 24px;
+      border-top: 1px solid var(--ligne);
+    }
+
+    .activite-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .activite-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 14px;
+      background: var(--mousse);
+      border: 1px solid rgba(23, 63, 42, 0.18);
+      border-radius: 999px;
+      color: var(--sapin);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .activite-tag .tag-icon {
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    /* ── CARTE INTERACTIVE ── */
+    .map-wrap {
+      margin-top: 40px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--ombre);
+      border: 1px solid var(--ligne);
+    }
+
+    #oasisMap {
+      height: 480px;
+      width: 100%;
+      background: var(--mousse);
+    }
+
+    .map-legend {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      font-size: 0.88rem;
+      color: rgba(38,38,34,0.72);
+    }
+
+    .map-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .lf-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+      flex-shrink: 0;
+    }
+
+    .lf-dot--home { background: var(--terracotta); }
+    .lf-dot--visit { background: var(--sapin-clair); }
+
+    /* Leaflet popup override */
+    .leaflet-popup-content-wrapper {
+      border-radius: var(--radius);
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 0.9rem;
+      color: var(--anthracite);
+    }
+
+    .lf-popup strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--sapin);
+      font-size: 1rem;
+    }
+
+    .lf-popup .lf-dist {
+      font-size: 0.82rem;
+      color: var(--terracotta);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    footer {
+      padding: 34px 20px;
+      color: var(--creme);
+      background: var(--sapin);
+    }
+
+    .footer-inner {
+      width: min(100%, var(--largeur));
+      display: flex;
+      gap: 18px;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0 auto;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 920px) {
+      .section-heading,
+      .calendar-layout,
+      .seed-box {
+        grid-template-columns: 1fr;
+      }
+
+      .terrain-grid,
+      .charter-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      .section {
+        padding: 54px 16px;
+      }
+
+      .hero {
+        min-height: 92svh;
+        padding: 96px 16px 42px;
+        background-position: 58% center;
+      }
+
+      .nav {
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hero-actions,
+      .calendar-toolbar,
+      .calendar-admin,
+      .footer-inner {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .terrain-grid,
+      .exchange-grid,
+      .charter-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .calendar-weekdays,
+      .calendar-grid {
+        gap: 5px;
+      }
+
+      .calendar-weekdays {
+        font-size: 0.66rem;
+      }
+
+      .day-button {
+        min-height: 58px;
+        padding: 7px;
+      }
+
+      .day-status,
+      .visits-list {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero" id="haut">
+      <nav class="nav" aria-label="Navigation principale">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>Château-Landon</span>
+        </div>
+        <div class="nav-links">
+          <a href="#oasis">L'Oasis</a>
+          <a href="#calendrier">Calendrier</a>
+          <a href="#echanges">Échanges</a>
+          <a href="#activites">Activités</a>
+          <a href="#alentours">Alentours</a>
+          <a href="#charte">Charte</a>
+          <a href="admin.html">Admin</a>
+        </div>
+      </nav>
+
+      <div class="hero-inner">
+        <!-- MODIFIER ICI : titre et texte d'accueil du lieu -->
+        <p class="section-kicker">Le Phare Numérique</p>
+        <h1>Du côté de Chateau-Landon coule une rivière</h1>
+        <p class="lead">
+          Ludivine, Gilles et Diego vous invite à partager un moment nature pour ralentir,
+          comtempler, jardiner, manger une tarte, ou boire une bière les pieds dans l'eau.
+        </p>
+
+        <div class="hero-actions">
+          <button class="lighthouse-button" id="lighthouseToggle" type="button" aria-pressed="true" disabled>
+            <span class="beacon-dot" aria-hidden="true"></span>
+            <span id="lighthouseLabel">On est présent !</span>
+          </button>
+          <a class="ghost-link" href="#calendrier">Voir les jours ouverts</a>
+        </div>
+
+        <p class="hero-note">
+          Vous êtes les bienvenus les copains lorsque le bouton "On est présent !" est vert,
+          et si vous souhaitez passer une tête, n'hésitez pas. Si le bouton est marqué absent,
+          on n'est pas là ! Regardez le calendrier pour savoir quand on sera présents,
+          mais pour être sûrs, envoyez un petit message.
+        </p>
+      </div>
+    </header>
+
+    <main>
+      <section class="section" id="oasis">
+        <div class="container">
+          <div class="section-heading">
+            <div>
+              <blockquote class="oasis-quote">
+                <p>« C'était un bel endroit pour se réjouir la vue et l'esprit. La Cosme y faisait un grand coude tout ombragé de grands saules et de vieux trembles ; l'eau y courtise les herbes fines et s'y jette en bouillonnant sur des lits de cailloux blancs, avant de s'endormir dans les grands fonds où les carpes s'en vont cacher leurs œufs. Les oiseaux de rivière, les rousserolles et les siffleurs s'y donnaient rendez-vous, et on entendait le cri de la poule d'eau qui rappelait ses petits cachés sous les grandes feuilles des nénuphars. Tout y sentait la fraîcheur et la paix de la vie sauvage, loin des chemins et du tracas des hommes, là où la terre semble se reposer au bruit de l'eau claire. »</p>
+                <footer>— George Sand, <cite>La Petite Fadette</cite></footer>
+              </blockquote>
+            </div>
+            <div class="oasis-intro-col">
+              <img src="images/gillesludi.png" alt="Gilles et Ludivine à l'Oasis" class="oasis-portrait" loading="lazy" draggable="false">
+              <p>
+                Le lieu fonctionne comme un petit archipel : chaque espace a son rythme,
+                son usage et son énergie. On y circule doucement, selon la saison et les besoins.
+              </p>
+            </div>
+          </div>
+
+          <div class="grid terrain-grid">
+            <!-- MODIFIER ICI : les textes des 4 terrains -->
+            <article class="terrain-card">
+              <div>
+                <span class="terrain-number">1</span>
+                <h3>Le Cœur</h3>
+              </div>
+              <p>Abri, cuisine, grandes tablées et vie commune. C'est le foyer des repas, des discussions et des coups de main spontanés.</p>
+            </article>
+
+            <article class="terrain-card">
+              <div>
+                <span class="terrain-number">2</span>
+                <h3>Le Havre</h3>
+              </div>
+              <p>Le chalet du repos, de la nuit et de la régénération. On y entre avec délicatesse, comme dans une respiration plus basse.</p>
+            </article>
+
+            <article class="terrain-card">
+              <div>
+                <span class="terrain-number">3</span>
+                <h3>La Clairière</h3>
+              </div>
+              <p>Campement estival, de juin à septembre, avec une grande tente et l'esprit des nuits dehors quand la saison le permet.</p>
+            </article>
+
+            <article class="terrain-card">
+              <div>
+                <span class="terrain-number">4</span>
+                <h3>Le petit bois</h3>
+              </div>
+              <p>La fraîcheur des grands arbres et de la rivière, pour se poser à l'ombre et écouter le lieu respirer.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="calendrier">
+        <div class="container">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Calendrier des saisons</p>
+              <h2>On vient quand le phare est allumé et vert !</h2>
+            </div>
+            <p>
+              Indiquez votre venue grâce au calendrier. Quand les cases sont vertes,
+              c'est que je suis là : vous pouvez choisir une date et laisser un petit mot
+              avec l'heure approximative de passage.
+            </p>
+          </div>
+
+          <div class="calendar-layout">
+            <section class="calendar-panel" aria-label="Calendrier interactif">
+              <div class="calendar-toolbar">
+                <button class="icon-button" id="previousMonth" type="button" aria-label="Mois précédent">‹</button>
+                <div class="calendar-title" id="calendarTitle"></div>
+                <button class="icon-button" id="nextMonth" type="button" aria-label="Mois suivant">›</button>
+              </div>
+
+              <div class="calendar-admin">
+                <label class="toggle" for="adminMode">
+                  <input id="adminMode" type="checkbox">
+                  Mode Kokolo : cocher les jours de présence
+                </label>
+                <span class="small-note">Les données sont sauvegardées dans ce navigateur.</span>
+              </div>
+
+              <div class="calendar-weekdays" aria-hidden="true">
+                <span>Lun</span>
+                <span>Mar</span>
+                <span>Mer</span>
+                <span>Jeu</span>
+                <span>Ven</span>
+                <span>Sam</span>
+                <span>Dim</span>
+              </div>
+
+              <div class="calendar-grid" id="calendarGrid"></div>
+            </section>
+
+            <aside class="visit-panel" aria-label="Formulaire de venue">
+              <p class="section-kicker">Prévenir d'une venue</p>
+              <h3 id="selectedDateTitle">Choisis une date verte</h3>
+              <p class="small-note" id="selectedDateHelp">
+                Clique sur un jour où c'est vert pour ouvrir le formulaire.
+              </p>
+
+              <form class="form-grid" id="visitForm" name="visite-copains" method="post" data-netlify="true" netlify-honeypot="bot-field">
+                <!-- MODIFIER ICI : champs du formulaire si tu veux collecter d'autres infos -->
+                <input type="hidden" name="form-name" value="visite-copains">
+                <input type="hidden" id="visitDateInput" name="date">
+                <label class="hidden" for="botField">
+                  Ne pas remplir
+                  <input id="botField" name="bot-field">
+                </label>
+
+                <label for="visitorName">
+                  Nom
+                  <input id="visitorName" name="visitorName" autocomplete="name" required placeholder="Ex : Camille">
+                </label>
+
+                <label for="visitorCount">
+                  Nombre de personnes
+                  <input id="visitorCount" name="visitorCount" type="number" min="1" max="12" required value="1">
+                </label>
+
+                <label for="visitorType">
+                  Intention de venue
+                  <select id="visitorType" name="visitorType" required>
+                    <option value="Simple passage">Simple passage</option>
+                    <option value="Hébergement sous la tente">Hébergement sous la tente</option>
+                    <option value="Coup de main / chantier">Coup de main / chantier</option>
+                    <option value="Repas partagé">Repas partagé</option>
+                  </select>
+                </label>
+
+                <label for="visitorTime">
+                  Vers quelle heure ?
+                  <input id="visitorTime" name="visitorTime" type="time">
+                </label>
+
+                <label for="visitorMessage">
+                  Message pour Ludivine et Gilles
+                  <textarea id="visitorMessage" name="visitorMessage" maxlength="600" placeholder="Ex : On passerait samedi avec du pain, envie de donner un coup de main au potager."></textarea>
+                </label>
+
+                <button class="submit-button" id="visitSubmit" type="submit" disabled>Notifier ma venue</button>
+                <p class="small-note">Si tu veux me joindre par téléphone : <a href="tel:+33682509297">06 82 50 92 97</a></p>
+                <p class="message" id="formMessage" role="status" aria-live="polite"></p>
+              </form>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="echanges">
+        <div class="container">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">L'Ardoise des Échanges</p>
+              <h2>Pas de prix, mais des gestes.</h2>
+            </div>
+            <p>
+              Le lieu vit par le don, l'entraide et l'attention. Cette ardoise peut changer
+              au fil des saisons, des récoltes, des chantiers et des envies.
+            </p>
+          </div>
+
+          <div class="grid exchange-grid">
+            <article class="exchange-card">
+              <!-- MODIFIER ICI : besoins actuels du lieu -->
+              <h3>La Terre demande...</h3>
+              <ul class="exchange-list">
+                <li>Des bras pour les petits chantiers et les bricolages doux.</li>
+                <li>Des bocaux, graines, outils manuels ou matériaux de récupération.</li>
+                <li>Un coup de main au potager, au bois, aux chemins et aux rangements.</li>
+                <li>Des idées simples pour rendre le lieu plus autonome.</li>
+              </ul>
+            </article>
+
+            <article class="exchange-card">
+              <!-- MODIFIER ICI : ce que le lieu offre -->
+              <h3>La Terre offre...</h3>
+              <ul class="exchange-list">
+                <li>Un espace de déconnexion, loin du rythme urbain et des injonctions.</li>
+                <li>Des repas partagés, des tablées longues et des cafés au soleil.</li>
+                <li>Des cueillettes, des pommes, des herbes, des saisons à observer.</li>
+                <li>Des ateliers guitare, des savoir-faire et des conversations lentes.</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="activites">
+        <div class="container">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Ce qu'on fait ici</p>
+              <h2>Les activités de l'Oasis.</h2>
+            </div>
+            <p>
+              Selon la saison, la météo et l'humeur du moment, il y a toujours quelque chose
+              à faire — ou à ne pas faire. Voici ce que le lieu invite à vivre.
+            </p>
+          </div>
+
+          <details class="activites-details" open>
+            <summary class="activites-summary">Voir toutes les activités</summary>
+            <div class="activites-body">
+              <div class="activite-tags">
+                <span class="activite-tag"><span class="tag-icon">🎣</span> Pêche</span>
+                <span class="activite-tag"><span class="tag-icon">🛶</span> Canoé</span>
+                <span class="activite-tag"><span class="tag-icon">🏊</span> Baignade</span>
+                <span class="activite-tag"><span class="tag-icon">😴</span> Sieste</span>
+                <span class="activite-tag"><span class="tag-icon">🍺</span> Bière</span>
+                <span class="activite-tag"><span class="tag-icon">🔥</span> Barbecue</span>
+                <span class="activite-tag"><span class="tag-icon">🎤</span> Karaoké</span>
+                <span class="activite-tag"><span class="tag-icon">🎲</span> Jeux anciens</span>
+                <span class="activite-tag"><span class="tag-icon">🚶</span> Balade</span>
+                <span class="activite-tag"><span class="tag-icon">🏘️</span> Visite du village</span>
+                <span class="activite-tag"><span class="tag-icon">🏺</span> Brocante</span>
+                <span class="activite-tag"><span class="tag-icon">🎵</span> Concert</span>
+                <span class="activite-tag"><span class="tag-icon">🌱</span> Cours de jardinage</span>
+                <span class="activite-tag"><span class="tag-icon">🌿</span> Plantes sauvages comestibles</span>
+                <span class="activite-tag"><span class="tag-icon">🍳</span> Cuisine</span>
+                <span class="activite-tag"><span class="tag-icon">📖</span> Recettes</span>
+                <span class="activite-tag"><span class="tag-icon">🥧</span> Tarte</span>
+                <span class="activite-tag"><span class="tag-icon">🚲</span> Vélo</span>
+              </div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <section class="section" id="charte">
+        <div class="container">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Les Lois de la Clairière</p>
+              <h2>Une liberté qui prend soin.</h2>
+            </div>
+            <p>
+              La charte garde l'esprit du lieu lisible : chacun est bienvenu dans la mesure où
+              sa présence respecte les hôtes, le vivant et le rythme commun.
+            </p>
+          </div>
+
+          <div class="grid charter-grid">
+            <!-- MODIFIER ICI : règles et formulation de la charte -->
+            <article class="charter-card">
+              <h3>Un lieu vivant, pas un service</h3>
+              <p>On vient quand Gilles et Ludivine sont là, le phare allumé. Ce n'est pas un gîte, ni une appli — c'est une maison habitée, une forêt qui respire, une table où l'on pose les sacs sans compter les heures.</p>
+            </article>
+
+            <article class="charter-card">
+              <h3>Légèreté sur la terre</h3>
+              <p>On marche doucement ici. On repart avec ses déchets, on ménage l'eau de la rivière, on laisse les zones d'ombre à ceux qui en ont besoin — les bêtes, les plantes, le silence. Chaque passage laisse l'endroit un peu plus intact qu'à l'arrivée.</p>
+            </article>
+
+            <article class="charter-card">
+              <h3>Hors du marché</h3>
+              <p>Pas de ticket, pas d'ardoise, pas de consommation minimum. On partage ce qu'on a — une recette, un coup de main, une chanson. On demande avant d'amener du monde. La générosité n'est pas un business model.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="photos">
+        <div class="container">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">L'Œil du Phare</p>
+              <h2>Quelques instants du lieu.</h2>
+            </div>
+            <p>
+              Des images du verger, des tablées, des saisons et des présences.
+              Un aperçu de ce que l'on trouve ici quand on prend le temps.
+            </p>
+          </div>
+
+          <div class="photo-grid">
+            <!-- MODIFIER ICI : remplace les src par tes vraies photos -->
+            <!-- Exemple : <div class="photo-thumb"><img src="photos/ma-photo.jpg" alt="description"></div> -->
+            <div class="photo-thumb"><img src="images/IMG-20250815-WA0010.jpg" alt="L'Oasis de Château-Landon" loading="lazy" draggable="false"></div>
+            <div class="photo-thumb"><img src="images/1778862810520.png" alt="Un moment au lieu" loading="lazy" draggable="false"></div>
+            <div class="photo-thumb"><img src="images/2025-09-12T14_11_23+02_00.JPEG" alt="La nature autour du lieu" loading="lazy" draggable="false"></div>
+            <div class="photo-thumb"><img src="images/IMG-20250815-WA0007.jpg" alt="Instant partagé à Château-Landon" loading="lazy" draggable="false"></div>
+            <div class="photo-thumb"><img src="images/IMG_20250420_123836657%20(1).jpg" alt="Le jardin et les chemins" loading="lazy" draggable="false"></div>
+            <div class="photo-thumb"><img src="images/IMG_20260410_162129752.jpg" alt="Le petit bois" loading="lazy" draggable="false"></div>
+            <div class="photo-thumb"><img src="images/IMG_20260512_085358397.jpg" alt="Ambiance bucolique" loading="lazy" draggable="false"></div>
+            <div class="photo-thumb"><img src="images/IMG_20260529_094555423.jpg" alt="La rivière et les arbres" loading="lazy" draggable="false"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="acces">
+        <div class="container">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Venir jusqu'ici</p>
+              <h2>Le chemin vers l'Oasis.</h2>
+            </div>
+            <p>
+              Château-Landon est à environ 90 km au sud de Paris, dans le Gâtinais (Seine-et-Marne).
+              Un détour qui vaut le voyage.
+            </p>
+          </div>
+
+          <div class="acces-grid">
+            <article class="acces-card">
+              <span class="acces-icon">🚗</span>
+              <h3>En voiture</h3>
+              <ul class="acces-list">
+                <li><strong>Depuis Paris :</strong> environ 1h15 (90 km)</li>
+                <li>A6 direction Lyon → sortie <strong>Nemours</strong> (n°16)</li>
+                <li>Le plus pratique : A6, sortie <strong>14 Malesherbes</strong>, la première sortie après le péage, puis traverser La Chapelle-la-Reine, Verteau, Aufferville, Bougligny et Château-Landon</li>
+                <li>Puis D40 direction Château-Landon (~15 min)</li>
+                <li>Ou via N7 depuis Fontainebleau, plus bucolique</li>
+                <li>Parking disponible sur place</li>
+              </ul>
+            </article>
+
+            <article class="acces-card">
+              <span class="acces-icon">🚆</span>
+              <h3>En train + vélo / covoiturage</h3>
+              <ul class="acces-list">
+                <li><strong>Depuis Paris Gare de Lyon :</strong> Transilien ligne R</li>
+                <li>Gare de <strong>Souppes – Château-Landon</strong> (~1h45)</li>
+                <li>La gare est à 4 km du bourg</li>
+                <li>Horaires sur <a href="https://www.transilien.com" target="_blank" rel="noopener" style="color:var(--sapin-clair)">transilien.com</a> — ligne R</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="alentours">
+        <div class="container">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Les Environs</p>
+              <h2>Alentours à explorer.</h2>
+            </div>
+            <p>
+              Le Gâtinais regorge de beaux endroits à deux coups de pédale ou de volant.
+              Voici quelques escales pour prolonger la balade.
+            </p>
+          </div>
+
+          <div class="map-wrap">
+            <div id="oasisMap" aria-label="Carte des environs de Château-Landon"></div>
+          </div>
+
+          <div class="map-legend">
+            <div class="map-legend-item">
+              <span class="lf-dot lf-dot--home"></span>
+              Château-Landon (chez nous)
+            </div>
+            <div class="map-legend-item">
+              <span class="lf-dot lf-dot--visit"></span>
+              Lieu à visiter
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="graines">
+        <div class="container">
+          <div class="seed-box">
+            <div>
+              <p class="section-kicker">La Boîte à Graines</p>
+              <h2>Prochainement</h2>
+              <p class="lead">
+                Le site est en construction, il va évoluer dans les prochains jours.
+              </p>
+            </div>
+
+            <!--
+              ZONE ÉVOLUTIVE
+              Ajoute ici de nouvelles rubriques quand le site grandira.
+
+              Exemples possibles :
+              <article>
+                <h3>Carnet de recettes sauvages</h3>
+                <p>Orties, pommes, tisanes, confitures et trouvailles de saison.</p>
+              </article>
+
+              <article>
+                <h3>Galerie photo</h3>
+                <p>Images du verger, des tablées, des chantiers et des couchers de soleil.</p>
+              </article>
+            -->
+            <div class="seed-placeholder">
+              Ici, les prochaines graines du Phare pourront germer tranquillement.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-inner">
+        <p>Le Phare Numérique - Oasis de Château-Landon</p>
+        <p>Gilles, Ludivine & Diego</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    /*
+      CALENDRIER PUBLIC
+      - Si Supabase est configure dans supabase-config.js, la page lit les donnees partagees.
+      - Sinon, elle reste utilisable en mode demo localStorage pour tester sans compte.
+    */
+
+    const STORAGE_KEYS = {
+      presence: "phare-demo-presence-days",
+      visits: "phare-demo-visit-requests",
+      lighthouse: "phare-demo-status"
+    };
+
+    const supabaseClient = window.isOasisSupabaseConfigured && window.isOasisSupabaseConfigured() && window.supabase
+      ? window.supabase.createClient(window.OASIS_SUPABASE.url, window.OASIS_SUPABASE.anonKey)
+      : null;
+
+    const state = {
+      currentDate: new Date(),
+      selectedDateKey: null,
+      presenceDays: [],
+      visits: {},
+      lighthouseOn: true
+    };
+
+    const elements = {
+      lighthouseToggle: document.querySelector("#lighthouseToggle"),
+      lighthouseLabel: document.querySelector("#lighthouseLabel"),
+      calendarTitle: document.querySelector("#calendarTitle"),
+      calendarGrid: document.querySelector("#calendarGrid"),
+      previousMonth: document.querySelector("#previousMonth"),
+      nextMonth: document.querySelector("#nextMonth"),
+      adminMode: document.querySelector("#adminMode"),
+      selectedDateTitle: document.querySelector("#selectedDateTitle"),
+      selectedDateHelp: document.querySelector("#selectedDateHelp"),
+      visitForm: document.querySelector("#visitForm"),
+      visitorName: document.querySelector("#visitorName"),
+      visitorCount: document.querySelector("#visitorCount"),
+      visitorType: document.querySelector("#visitorType"),
+      visitorTime: document.querySelector("#visitorTime"),
+      visitorMessage: document.querySelector("#visitorMessage"),
+      visitDateInput: document.querySelector("#visitDateInput"),
+      visitSubmit: document.querySelector("#visitSubmit"),
+      formMessage: document.querySelector("#formMessage")
+    };
+
+    if (elements.adminMode) {
+      elements.adminMode.closest(".calendar-admin").innerHTML = `
+        <span class="small-note">Les jours ouverts sont geres depuis <a href="admin.html">la page admin</a>.</span>
+        <span class="small-note">${supabaseClient ? "Mode partage actif." : "Mode demo local : configure Supabase pour publier."}</span>
+      `;
+    }
+
+    const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+
+    const monthFormatter = new Intl.DateTimeFormat("fr-FR", {
+      month: "long",
+      year: "numeric"
+    });
+
+    function loadJson(key, fallback) {
+      try {
+        const stored = localStorage.getItem(key);
+        return stored ? JSON.parse(stored) : fallback;
+      } catch (error) {
+        console.warn("Impossible de lire les données locales :", key, error);
+        return fallback;
+      }
+    }
+
+    function saveJson(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function getDateKey(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function getFrenchMonthStartOffset(date) {
+      const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+      return firstDay === 0 ? 6 : firstDay - 1;
+    }
+
+    function isSameMonth(dateA, dateB) {
+      return dateA.getFullYear() === dateB.getFullYear() && dateA.getMonth() === dateB.getMonth();
+    }
+
+    async function loadPublicData() {
+      elements.formMessage.textContent = supabaseClient
+        ? "Chargement des jours ouverts..."
+        : "Mode demo local : les donnees ne sont pas partagees.";
+
+      if (!supabaseClient) {
+        state.presenceDays = loadJson(STORAGE_KEYS.presence, []);
+        state.visits = loadJson(STORAGE_KEYS.visits, {});
+        state.lighthouseOn = loadJson(STORAGE_KEYS.lighthouse, true);
+        elements.formMessage.textContent = "";
+        updateLighthouseButton();
+        renderCalendar();
+        return;
+      }
+
+      const [{ data: settings, error: settingsError }, { data: presence, error: presenceError }] = await Promise.all([
+        supabaseClient.from("app_settings").select("lighthouse_on").eq("id", "main").single(),
+        supabaseClient.from("presence_days").select("date").order("date", { ascending: true })
+      ]);
+
+      if (settingsError || presenceError) {
+        console.error(settingsError || presenceError);
+        elements.formMessage.textContent = "Impossible de charger le calendrier. Verifie la configuration Supabase.";
+        return;
+      }
+
+      state.lighthouseOn = Boolean(settings && settings.lighthouse_on);
+      state.presenceDays = (presence || []).map((item) => item.date);
+      state.visits = {};
+      elements.formMessage.textContent = "";
+      updateLighthouseButton();
+      renderCalendar();
+    }
+
+    function updateLighthouseButton() {
+      elements.lighthouseToggle.classList.toggle("is-off", !state.lighthouseOn);
+      elements.lighthouseToggle.setAttribute("aria-pressed", String(state.lighthouseOn));
+      elements.lighthouseLabel.textContent = state.lighthouseOn ? "On est présent !" : "On est absents";
+    }
+
+    function renderCalendar() {
+      const todayKey = getDateKey(new Date());
+      const monthDate = state.currentDate;
+      const year = monthDate.getFullYear();
+      const month = monthDate.getMonth();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const startOffset = getFrenchMonthStartOffset(monthDate);
+
+      elements.calendarTitle.textContent = monthFormatter.format(monthDate);
+      elements.calendarGrid.innerHTML = "";
+
+      for (let index = 0; index < startOffset; index += 1) {
+        const emptyDay = document.createElement("button");
+        emptyDay.className = "day-button is-empty";
+        emptyDay.type = "button";
+        emptyDay.tabIndex = -1;
+        elements.calendarGrid.appendChild(emptyDay);
+      }
+
+      for (let day = 1; day <= daysInMonth; day += 1) {
+        const date = new Date(year, month, day);
+        const dateKey = getDateKey(date);
+        const isPresent = state.presenceDays.includes(dateKey);
+        const isSelected = state.selectedDateKey === dateKey;
+        const dayVisits = state.visits[dateKey] || [];
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "day-button";
+        button.dataset.dateKey = dateKey;
+        button.setAttribute("aria-label", buildDayAriaLabel(date, isPresent, dayVisits.length));
+
+        if (isPresent) button.classList.add("is-present");
+        if (isSelected) button.classList.add("is-selected");
+        if (dateKey === todayKey) button.classList.add("is-today");
+
+        button.innerHTML = `
+          <span class="day-number">${day}</span>
+          <span class="day-status">${isPresent ? "Phare allumé" : "Repos"}</span>
+          <span class="visits-list">${dayVisits.map(renderVisitPill).join("")}</span>
+        `;
+
+        button.addEventListener("click", () => handleDayClick(dateKey));
+        elements.calendarGrid.appendChild(button);
+      }
+
+      updateVisitPanel();
+    }
+
+    function buildDayAriaLabel(date, isPresent, visitsCount) {
+      const status = isPresent ? "jour de présence" : "jour fermé";
+      const visits = visitsCount > 0 ? `${visitsCount} venue(s) annoncée(s)` : "aucune venue annoncée";
+      return `${dateFormatter.format(date)}, ${status}, ${visits}`;
+    }
+
+    function renderVisitPill(visit) {
+      return `<span class="visit-pill">${escapeHtml(visit.name)} · ${visit.count} pers.</span>`;
+    }
+
+    function handleDayClick(dateKey) {
+      state.selectedDateKey = dateKey;
+      elements.formMessage.textContent = "";
+      renderCalendar();
+    }
+
+    function updateVisitPanel() {
+      const selectedDate = state.selectedDateKey ? new Date(`${state.selectedDateKey}T12:00:00`) : null;
+      const selectedIsPresent = state.selectedDateKey && state.presenceDays.includes(state.selectedDateKey);
+      // Le formulaire est accessible dès qu'une case verte est choisie,
+      // que le phare soit allumé ou éteint.
+      const canSubmit = Boolean(selectedIsPresent);
+
+      if (!selectedDate) {
+        elements.selectedDateTitle.textContent = "Choisis une date verte";
+        elements.selectedDateHelp.textContent = "Clique sur un jour vert pour ouvrir le formulaire.";
+      } else if (!selectedIsPresent) {
+        elements.selectedDateTitle.textContent = dateFormatter.format(selectedDate);
+        elements.selectedDateHelp.textContent = "Ce jour n'est pas encore ouvert. Les dates vertes sont choisies depuis la page admin.";
+      } else if (!state.lighthouseOn) {
+        elements.selectedDateTitle.textContent = dateFormatter.format(selectedDate);
+        elements.selectedDateHelp.textContent = "Le phare est éteint en ce moment, mais ce jour est bien ouvert : tu peux quand même prévenir de ta venue.";
+      } else {
+        elements.selectedDateTitle.textContent = dateFormatter.format(selectedDate);
+        elements.selectedDateHelp.textContent = "La date est verte : tu peux prévenir de ta venue.";
+      }
+
+      elements.visitDateInput.value = state.selectedDateKey || "";
+      elements.visitSubmit.disabled = !canSubmit;
+    }
+
+    async function handleVisitSubmit(event) {
+      event.preventDefault();
+
+      // On vérifie uniquement que le jour est ouvert (case verte), pas l'état du phare.
+      if (!state.selectedDateKey || !state.presenceDays.includes(state.selectedDateKey)) {
+        elements.formMessage.textContent = "Choisis d'abord une date verte.";
+        return;
+      }
+
+      const visit = {
+        name: elements.visitorName.value.trim(),
+        people_count: Number(elements.visitorCount.value),
+        visit_type: elements.visitorType.value,
+        arrival_time: elements.visitorTime.value,
+        message: elements.visitorMessage.value.trim()
+      };
+
+      if (!visit.name || visit.people_count < 1) {
+        elements.formMessage.textContent = "Il manque un nom ou un nombre de personnes.";
+        return;
+      }
+
+      elements.visitSubmit.disabled = true;
+
+      if (supabaseClient) {
+        const { error } = await supabaseClient.from("visits").insert({
+          date: state.selectedDateKey,
+          name: visit.name,
+          people_count: visit.people_count,
+          visit_type: visit.visit_type,
+          arrival_time: visit.arrival_time || null,
+          message: visit.message || null
+        });
+
+        if (error) {
+          console.error(error);
+          elements.formMessage.textContent = "La venue n'a pas pu etre enregistree. Reessaie dans un instant.";
+          updateVisitPanel();
+          return;
+        }
+      } else {
+        const demoVisit = {
+          name: visit.name,
+          count: visit.people_count,
+          type: visit.visit_type,
+          arrivalTime: visit.arrival_time,
+          message: visit.message,
+          createdAt: new Date().toISOString()
+        };
+        const dayVisits = state.visits[state.selectedDateKey] || [];
+        state.visits[state.selectedDateKey] = [...dayVisits, demoVisit];
+        saveJson(STORAGE_KEYS.visits, state.visits);
+      }
+
+      elements.visitForm.reset();
+      elements.visitorCount.value = 1;
+      elements.visitDateInput.value = state.selectedDateKey || "";
+      await sendNetlifyFormNotification(visit);
+      elements.formMessage.textContent = "Venue notifiée. Merci, la tablée respire déjà mieux.";
+      renderCalendar();
+    }
+
+    async function sendNetlifyFormNotification(visit) {
+      if (window.location.protocol === "file:") return;
+
+      const payload = new URLSearchParams();
+      payload.set("form-name", "visite-copains");
+      payload.set("date", state.selectedDateKey);
+      payload.set("visitorName", visit.name);
+      payload.set("visitorCount", String(visit.people_count));
+      payload.set("visitorType", visit.visit_type);
+      payload.set("visitorTime", visit.arrival_time);
+      payload.set("visitorMessage", visit.message);
+
+      try {
+        await fetch("/", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: payload.toString()
+        });
+      } catch (error) {
+        console.warn("Notification Netlify non envoyee :", error);
+      }
+    }
+
+    function changeMonth(direction) {
+      state.currentDate = new Date(
+        state.currentDate.getFullYear(),
+        state.currentDate.getMonth() + direction,
+        1
+      );
+
+      const selectedDate = state.selectedDateKey ? new Date(`${state.selectedDateKey}T12:00:00`) : null;
+      if (selectedDate && !isSameMonth(selectedDate, state.currentDate)) {
+        state.selectedDateKey = null;
+      }
+
+      renderCalendar();
+    }
+
+    function escapeHtml(value) {
+      return value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    elements.previousMonth.addEventListener("click", () => changeMonth(-1));
+    elements.nextMonth.addEventListener("click", () => changeMonth(1));
+    elements.visitForm.addEventListener("submit", handleVisitSubmit);
+
+    loadPublicData();
+  </script>
+
+  <!-- CARTE INTERACTIVE DES ENVIRONS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script>
+    (function () {
+      const mapEl = document.getElementById("oasisMap");
+      if (!mapEl) return;
+
+      const map = L.map("oasisMap", {
+        center: [48.1486, 2.7067],
+        zoom: 11,
+        scrollWheelZoom: false
+      });
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 18
+      }).addTo(map);
+
+      // Icône maison (terracotta)
+      const homeIcon = L.divIcon({
+        className: "",
+        html: '<span style="display:block;width:20px;height:20px;border-radius:50%;background:#b96745;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.35)"></span>',
+        iconSize: [20, 20],
+        iconAnchor: [10, 10],
+        popupAnchor: [0, -12]
+      });
+
+      // Icône lieu à visiter (vert sapin)
+      const visitIcon = L.divIcon({
+        className: "",
+        html: '<span style="display:block;width:16px;height:16px;border-radius:50%;background:#2f6b47;border:2px solid #fff;box-shadow:0 2px 5px rgba(0,0,0,0.28)"></span>',
+        iconSize: [16, 16],
+        iconAnchor: [8, 8],
+        popupAnchor: [0, -10]
+      });
+
+      const lieux = [
+        {
+          lat: 48.1486, lng: 2.7067,
+          home: true,
+          nom: "Château-Landon",
+          dist: null,
+          desc: "Le Phare Numérique – notre Oasis. Centre médiéval perché, chemin des amoureux le long du Lunain, lavoirs et jardins secrets."
+        },
+        {
+          lat: 48.1817, lng: 2.7358,
+          nom: "Souppes-sur-Loing",
+          dist: "~8 km",
+          desc: "Bord du Loing, point de départ de balades le long de la rivière. La gare de la ligne R est ici."
+        },
+        {
+          lat: 48.0617, lng: 2.7483,
+          nom: "Dordives",
+          dist: "~12 km",
+          desc: "Étang de Dordives, concerts en plein air l'été au bord de l'eau — ambiance guinguette garantie."
+        },
+        {
+          lat: 48.0917, lng: 2.7917,
+          nom: "Ferrières-en-Gâtinais",
+          dist: "~15 km",
+          desc: "Petite Cité de Caractère. Abbaye fondée par Clovis, place médiévale et marché animé. L'un des plus beaux villages du Gâtinais."
+        },
+        {
+          lat: 48.2661, lng: 2.6897,
+          nom: "Nemours",
+          dist: "~18 km",
+          desc: "Musée de la Préhistoire d'Île-de-France (entrée libre !), château médiéval, terrasses d'été le long du Loing."
+        },
+        {
+          lat: 48.0453, lng: 2.7994,
+          nom: "Sceaux-du-Gâtinais",
+          dist: "~18 km",
+          desc: "Futur musée Segeta gallo-romain — des fouilles passionnantes autour d'un carrefour antique majeur de la Gaule."
+        },
+        {
+          lat: 47.9803, lng: 2.7322,
+          nom: "Châlette-sur-Loing",
+          dist: "~28 km",
+          desc: "Le lac et ses guinguettes : concerts les samedis soir d'été, baignade, pétanque et bonne humeur garantie."
+        },
+        {
+          lat: 47.9981, lng: 2.7336,
+          nom: "Montargis",
+          dist: "~32 km",
+          desc: "La Venise du Gâtinais — 132 ponts, balade en bateau sur les canaux, musée Girodet et les célèbres pralines."
+        }
+      ];
+
+      lieux.forEach(function (lieu) {
+        const icon = lieu.home ? homeIcon : visitIcon;
+        const distHtml = lieu.dist
+          ? '<p class="lf-dist">' + lieu.dist + ' de l\'Oasis</p>'
+          : '<p class="lf-dist">📍 Vous êtes ici</p>';
+        const popup = '<div class="lf-popup"><strong>' + lieu.nom + '</strong>' + distHtml + lieu.desc + '</div>';
+        L.marker([lieu.lat, lieu.lng], { icon: icon })
+          .addTo(map)
+          .bindPopup(popup, { maxWidth: 240 });
+      });
+    })();
+  </script>
+</body>
+</html>

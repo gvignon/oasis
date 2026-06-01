@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin - Le Phare Numérique</title>
+  <meta name="description" content="Administration du Phare Numérique : présence, dates ouvertes et inscriptions.">
+  <style>
+    :root {
+      --sapin: #173f2a;
+      --sapin-clair: #2f6b47;
+      --terracotta: #b96745;
+      --creme: #f6f0df;
+      --creme-chaud: #fff9ea;
+      --anthracite: #262622;
+      --mousse: #dce8c8;
+      --ligne: rgba(38, 38, 34, 0.15);
+      --ombre: 0 18px 42px rgba(23, 63, 42, 0.14);
+      --radius: 8px;
+      --largeur: 1120px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--anthracite);
+      background: var(--creme);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .topbar {
+      padding: 18px 20px;
+      color: var(--creme-chaud);
+      background: var(--sapin);
+    }
+
+    .topbar-inner,
+    .container {
+      width: min(100%, var(--largeur));
+      margin: 0 auto;
+    }
+
+    .topbar-inner {
+      display: flex;
+      gap: 14px;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      font-weight: 850;
+    }
+
+    .topbar a {
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 249, 234, 0.5);
+    }
+
+    main {
+      padding: 42px 20px 72px;
+    }
+
+    .hero {
+      margin-bottom: 28px;
+    }
+
+    .kicker {
+      margin: 0 0 8px;
+      color: var(--terracotta);
+      font-size: 0.82rem;
+      font-weight: 850;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      color: var(--sapin);
+      line-height: 1.12;
+    }
+
+    h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(2.2rem, 7vw, 4.5rem);
+      font-weight: 500;
+    }
+
+    h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.7rem, 4vw, 2.8rem);
+      font-weight: 500;
+    }
+
+    h3 {
+      font-size: 1.08rem;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .lead {
+      max-width: 720px;
+      margin-top: 14px;
+      color: rgba(38, 38, 34, 0.78);
+      font-size: 1.08rem;
+    }
+
+    .panel {
+      padding: 22px;
+      background: rgba(255, 249, 234, 0.86);
+      border: 1px solid var(--ligne);
+      border-radius: var(--radius);
+      box-shadow: var(--ombre);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.75fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .stack {
+      display: grid;
+      gap: 16px;
+    }
+
+    .login-grid {
+      max-width: 480px;
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: rgba(38, 38, 34, 0.78);
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+
+    input {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 12px;
+      color: var(--anthracite);
+      background: #fffdf4;
+      border: 1px solid rgba(38, 38, 34, 0.18);
+      border-radius: var(--radius);
+    }
+
+    input:focus {
+      outline: 3px solid rgba(185, 103, 69, 0.22);
+      border-color: var(--terracotta);
+    }
+
+    .button {
+      min-height: 46px;
+      padding: 11px 15px;
+      color: var(--creme-chaud);
+      background: var(--sapin);
+      border: 0;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 850;
+    }
+
+    .button.secondary {
+      color: var(--sapin);
+      background: var(--mousse);
+    }
+
+    .button.danger {
+      background: var(--terracotta);
+    }
+
+    .button:disabled {
+      cursor: not-allowed;
+      opacity: 0.48;
+    }
+
+    .admin-head {
+      display: flex;
+      gap: 14px;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .status-button {
+      display: inline-flex;
+      min-height: 52px;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 18px;
+      color: var(--creme-chaud);
+      background: var(--sapin);
+      border: 0;
+      border-radius: var(--radius);
+      cursor: pointer;
+      box-shadow: var(--ombre);
+      font-weight: 850;
+    }
+
+    .status-button.is-off {
+      background: var(--anthracite);
+    }
+
+    .beacon-dot {
+      width: 14px;
+      height: 14px;
+      background: #b5f08d;
+      border-radius: 999px;
+      box-shadow: 0 0 0 rgba(181, 240, 141, 0.9);
+      animation: pulse 1.55s ease-in-out infinite;
+    }
+
+    .status-button.is-off .beacon-dot {
+      background: #817f76;
+      box-shadow: none;
+      animation: none;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(181, 240, 141, 0.7); }
+      70% { box-shadow: 0 0 0 12px rgba(181, 240, 141, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(181, 240, 141, 0); }
+    }
+
+    .calendar-toolbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .calendar-title {
+      color: var(--sapin);
+      font-size: 1.25rem;
+      font-weight: 850;
+      text-transform: capitalize;
+    }
+
+    .icon-button {
+      width: 42px;
+      height: 42px;
+      display: inline-grid;
+      place-items: center;
+      color: var(--sapin);
+      background: var(--mousse);
+      border: 1px solid rgba(23, 63, 42, 0.16);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 900;
+    }
+
+    .calendar-weekdays,
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .calendar-weekdays {
+      margin-bottom: 8px;
+      color: rgba(38, 38, 34, 0.62);
+      font-size: 0.78rem;
+      font-weight: 850;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .day-button {
+      position: relative;
+      min-height: 74px;
+      padding: 9px;
+      color: var(--anthracite);
+      background: #fffdf4;
+      border: 1px solid var(--ligne);
+      border-radius: var(--radius);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .day-button.is-empty {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .day-button.is-present {
+      background: #dcefd0;
+      border-color: rgba(47, 107, 71, 0.55);
+    }
+
+    .day-number {
+      display: block;
+      font-weight: 900;
+    }
+
+    .day-status {
+      display: block;
+      margin-top: 10px;
+      color: rgba(38, 38, 34, 0.7);
+      font-size: 0.74rem;
+      font-weight: 850;
+    }
+
+    .visits {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .visit-card {
+      display: grid;
+      gap: 6px;
+      padding: 12px;
+      background: #fffdf4;
+      border: 1px solid var(--ligne);
+      border-radius: var(--radius);
+    }
+
+    .visit-meta {
+      color: rgba(38, 38, 34, 0.66);
+      font-size: 0.86rem;
+    }
+
+    .message {
+      min-height: 24px;
+      color: var(--sapin);
+      font-weight: 850;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 860px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      main {
+        padding: 32px 16px 56px;
+      }
+
+      .calendar-weekdays,
+      .calendar-grid {
+        gap: 5px;
+      }
+
+      .calendar-weekdays {
+        font-size: 0.66rem;
+      }
+
+      .day-button {
+        min-height: 58px;
+        padding: 7px;
+      }
+
+      .day-status {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Admin du Phare Numérique</div>
+      <a href="index.html">Retour au site public</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <section class="hero">
+        <p class="kicker">Poste de pilotage</p>
+        <h1>Ouvrir le lieu, doucement.</h1>
+        <p class="lead">
+          Ici, Kokolo peut allumer ou éteindre le Phare, choisir les jours de présence,
+          et lire les intentions de venue des copains.
+        </p>
+      </section>
+
+      <section class="panel" id="setupPanel">
+        <p class="kicker">Configuration requise</p>
+        <h2>Supabase n'est pas encore relié.</h2>
+        <p class="lead">
+          Remplis le fichier supabase-config.js avec l'URL du projet et la clé anon public,
+          puis recharge cette page.
+        </p>
+      </section>
+
+      <section class="panel hidden" id="loginPanel">
+        <p class="kicker">Connexion admin</p>
+        <h2>Entre avec ton compte Supabase.</h2>
+        <form class="login-grid" id="loginForm">
+          <label for="email">
+            Email
+            <input id="email" name="email" type="email" autocomplete="email" required>
+          </label>
+          <label for="password">
+            Mot de passe
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+          </label>
+          <button class="button" type="submit">Entrer dans l'admin</button>
+          <p class="message" id="loginMessage" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="hidden" id="adminPanel">
+        <div class="admin-head">
+          <button class="status-button" id="lighthouseToggle" type="button" aria-pressed="true">
+            <span class="beacon-dot" aria-hidden="true"></span>
+            <span id="lighthouseLabel">Le Phare est Allumé</span>
+          </button>
+          <button class="button secondary" id="logoutButton" type="button">Se déconnecter</button>
+        </div>
+
+        <div class="layout">
+          <section class="panel" aria-label="Calendrier admin">
+            <div class="calendar-toolbar">
+              <button class="icon-button" id="previousMonth" type="button" aria-label="Mois précédent">‹</button>
+              <div class="calendar-title" id="calendarTitle"></div>
+              <button class="icon-button" id="nextMonth" type="button" aria-label="Mois suivant">›</button>
+            </div>
+
+            <p class="message" id="adminMessage" role="status" aria-live="polite">
+              Clique sur une date pour l'ouvrir ou la fermer.
+            </p>
+
+            <div class="calendar-weekdays" aria-hidden="true">
+              <span>Lun</span>
+              <span>Mar</span>
+              <span>Mer</span>
+              <span>Jeu</span>
+              <span>Ven</span>
+              <span>Sam</span>
+              <span>Dim</span>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+          </section>
+
+          <aside class="panel" aria-label="Venues annoncées">
+            <p class="kicker">Inscriptions</p>
+            <h2>Venues annoncées</h2>
+            <div class="visits" id="visitsList"></div>
+          </aside>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script>
+    const client = window.isOasisSupabaseConfigured && window.isOasisSupabaseConfigured() && window.supabase
+      ? window.supabase.createClient(window.OASIS_SUPABASE.url, window.OASIS_SUPABASE.anonKey)
+      : null;
+
+    const state = {
+      currentDate: new Date(),
+      presenceDays: [],
+      visits: [],
+      lighthouseOn: true
+    };
+
+    const elements = {
+      setupPanel: document.querySelector("#setupPanel"),
+      loginPanel: document.querySelector("#loginPanel"),
+      adminPanel: document.querySelector("#adminPanel"),
+      loginForm: document.querySelector("#loginForm"),
+      loginMessage: document.querySelector("#loginMessage"),
+      logoutButton: document.querySelector("#logoutButton"),
+      lighthouseToggle: document.querySelector("#lighthouseToggle"),
+      lighthouseLabel: document.querySelector("#lighthouseLabel"),
+      previousMonth: document.querySelector("#previousMonth"),
+      nextMonth: document.querySelector("#nextMonth"),
+      calendarTitle: document.querySelector("#calendarTitle"),
+      calendarGrid: document.querySelector("#calendarGrid"),
+      adminMessage: document.querySelector("#adminMessage"),
+      visitsList: document.querySelector("#visitsList")
+    };
+
+    const monthFormatter = new Intl.DateTimeFormat("fr-FR", {
+      month: "long",
+      year: "numeric"
+    });
+
+    const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+
+    function getDateKey(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function getFrenchMonthStartOffset(date) {
+      const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+      return firstDay === 0 ? 6 : firstDay - 1;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function show(panelName) {
+      elements.setupPanel.classList.toggle("hidden", panelName !== "setup");
+      elements.loginPanel.classList.toggle("hidden", panelName !== "login");
+      elements.adminPanel.classList.toggle("hidden", panelName !== "admin");
+    }
+
+    async function boot() {
+      if (!client) {
+        show("setup");
+        return;
+      }
+
+      const { data } = await client.auth.getSession();
+      if (data.session) {
+        show("admin");
+        await loadAdminData();
+      } else {
+        show("login");
+      }
+    }
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      elements.loginMessage.textContent = "Connexion en cours...";
+
+      const formData = new FormData(elements.loginForm);
+      const { error } = await client.auth.signInWithPassword({
+        email: formData.get("email"),
+        password: formData.get("password")
+      });
+
+      if (error) {
+        elements.loginMessage.textContent = "Connexion impossible. Verifie l'email et le mot de passe.";
+        return;
+      }
+
+      elements.loginForm.reset();
+      elements.loginMessage.textContent = "";
+      show("admin");
+      await loadAdminData();
+    }
+
+    async function loadAdminData() {
+      elements.adminMessage.textContent = "Chargement...";
+
+      const [{ data: settings, error: settingsError }, { data: presence, error: presenceError }, { data: visits, error: visitsError }] = await Promise.all([
+        client.from("app_settings").select("lighthouse_on").eq("id", "main").single(),
+        client.from("presence_days").select("date").order("date", { ascending: true }),
+        client.from("visits").select("id,date,name,people_count,visit_type,arrival_time,message,created_at").order("date", { ascending: true })
+      ]);
+
+      if (settingsError || presenceError || visitsError) {
+        console.error(settingsError || presenceError || visitsError);
+        elements.adminMessage.textContent = "Chargement impossible. Verifie les tables et les regles Supabase.";
+        return;
+      }
+
+      state.lighthouseOn = Boolean(settings && settings.lighthouse_on);
+      state.presenceDays = (presence || []).map((item) => item.date);
+      state.visits = visits || [];
+
+      elements.adminMessage.textContent = "Clique sur une date pour l'ouvrir ou la fermer.";
+      updateLighthouseButton();
+      renderCalendar();
+      renderVisits();
+    }
+
+    function updateLighthouseButton() {
+      elements.lighthouseToggle.classList.toggle("is-off", !state.lighthouseOn);
+      elements.lighthouseToggle.setAttribute("aria-pressed", String(state.lighthouseOn));
+      elements.lighthouseLabel.textContent = state.lighthouseOn ? "Le Phare est Allumé" : "Le Phare est Éteint";
+    }
+
+    function renderCalendar() {
+      const monthDate = state.currentDate;
+      const year = monthDate.getFullYear();
+      const month = monthDate.getMonth();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const startOffset = getFrenchMonthStartOffset(monthDate);
+
+      elements.calendarTitle.textContent = monthFormatter.format(monthDate);
+      elements.calendarGrid.innerHTML = "";
+
+      for (let index = 0; index < startOffset; index += 1) {
+        const emptyDay = document.createElement("button");
+        emptyDay.className = "day-button is-empty";
+        emptyDay.type = "button";
+        emptyDay.tabIndex = -1;
+        elements.calendarGrid.appendChild(emptyDay);
+      }
+
+      for (let day = 1; day <= daysInMonth; day += 1) {
+        const date = new Date(year, month, day);
+        const dateKey = getDateKey(date);
+        const isPresent = state.presenceDays.includes(dateKey);
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = isPresent ? "day-button is-present" : "day-button";
+        button.dataset.dateKey = dateKey;
+        button.innerHTML = `
+          <span class="day-number">${day}</span>
+          <span class="day-status">${isPresent ? "Ouvert" : "Ferme"}</span>
+        `;
+        button.addEventListener("click", () => togglePresence(dateKey));
+        elements.calendarGrid.appendChild(button);
+      }
+    }
+
+    function renderVisits() {
+      if (state.visits.length === 0) {
+        elements.visitsList.innerHTML = "<p class=\"lead\">Aucune venue annoncee pour le moment.</p>";
+        return;
+      }
+
+      elements.visitsList.innerHTML = state.visits.map((visit) => {
+        const visitDate = new Date(`${visit.date}T12:00:00`);
+        return `
+          <article class="visit-card">
+            <h3>${escapeHtml(visit.name)} - ${visit.people_count} pers.</h3>
+            <p>${escapeHtml(visit.visit_type)}</p>
+            ${visit.arrival_time ? `<p>Vers ${escapeHtml(visit.arrival_time.slice(0, 5))}</p>` : ""}
+            ${visit.message ? `<p>${escapeHtml(visit.message)}</p>` : ""}
+            <p class="visit-meta">${dateFormatter.format(visitDate)}</p>
+            <button class="button danger" type="button" data-delete-visit="${visit.id}">Supprimer</button>
+          </article>
+        `;
+      }).join("");
+
+      elements.visitsList.querySelectorAll("[data-delete-visit]").forEach((button) => {
+        button.addEventListener("click", () => deleteVisit(button.dataset.deleteVisit));
+      });
+    }
+
+    async function toggleLighthouse() {
+      const nextValue = !state.lighthouseOn;
+      elements.lighthouseToggle.disabled = true;
+
+      const { error } = await client
+        .from("app_settings")
+        .update({ lighthouse_on: nextValue, updated_at: new Date().toISOString() })
+        .eq("id", "main");
+
+      elements.lighthouseToggle.disabled = false;
+
+      if (error) {
+        console.error(error);
+        elements.adminMessage.textContent = "Impossible de changer l'etat du Phare.";
+        return;
+      }
+
+      state.lighthouseOn = nextValue;
+      updateLighthouseButton();
+      elements.adminMessage.textContent = state.lighthouseOn ? "Le Phare est allume." : "Le Phare est eteint.";
+    }
+
+    async function togglePresence(dateKey) {
+      const isPresent = state.presenceDays.includes(dateKey);
+      elements.adminMessage.textContent = isPresent ? "Fermeture du jour..." : "Ouverture du jour...";
+
+      const request = isPresent
+        ? client.from("presence_days").delete().eq("date", dateKey)
+        : client.from("presence_days").insert({ date: dateKey, updated_at: new Date().toISOString() });
+
+      const { error } = await request;
+
+      if (error) {
+        console.error(error);
+        elements.adminMessage.textContent = "Impossible de modifier cette date.";
+        return;
+      }
+
+      if (isPresent) {
+        state.presenceDays = state.presenceDays.filter((day) => day !== dateKey);
+      } else {
+        state.presenceDays = [...state.presenceDays, dateKey].sort();
+      }
+
+      elements.adminMessage.textContent = isPresent ? "Jour ferme." : "Jour ouvert.";
+      renderCalendar();
+      await loadAdminData();
+    }
+
+    async function deleteVisit(id) {
+      const { error } = await client.from("visits").delete().eq("id", id);
+
+      if (error) {
+        console.error(error);
+        elements.adminMessage.textContent = "Impossible de supprimer cette venue.";
+        return;
+      }
+
+      state.visits = state.visits.filter((visit) => visit.id !== id);
+      renderVisits();
+      elements.adminMessage.textContent = "Venue supprimee.";
+    }
+
+    function changeMonth(direction) {
+      state.currentDate = new Date(
+        state.currentDate.getFullYear(),
+        state.currentDate.getMonth() + direction,
+        1
+      );
+      renderCalendar();
+    }
+
+    elements.loginForm.addEventListener("submit", handleLogin);
+    elements.logoutButton.addEventListener("click", async () => {
+      await client.auth.signOut();
+      show("login");
+    });
+    elements.lighthouseToggle.addEventListener("click", toggleLighthouse);
+    elements.previousMonth.addEventListener("click", () => changeMonth(-1));
+    elements.nextMonth.addEventListener("click", () => changeMonth(1));
+
+    boot();
+  </script>
+</body>
+</html>
