@@ -318,11 +318,6 @@
       gap: 18px;
     }
 
-    .terrain-grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-
-    .terrain-card,
     .exchange-card,
     .charter-card,
     .seed-box,
@@ -332,31 +327,6 @@
       border: 1px solid var(--ligne);
       border-radius: var(--radius);
       box-shadow: var(--ombre);
-    }
-
-    .terrain-card {
-      min-height: 245px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 20px;
-    }
-
-    .terrain-number {
-      width: 38px;
-      height: 38px;
-      display: grid;
-      place-items: center;
-      margin-bottom: 22px;
-      color: var(--creme-chaud);
-      background: var(--terracotta);
-      border-radius: 999px;
-      font-weight: 800;
-    }
-
-    .terrain-card p {
-      color: rgba(38, 38, 34, 0.78);
-      font-size: 0.96rem;
     }
 
     .calendar-layout {
@@ -900,7 +870,6 @@
         grid-template-columns: 1fr;
       }
 
-      .terrain-grid,
       .charter-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
@@ -933,7 +902,6 @@
         flex-direction: column;
       }
 
-      .terrain-grid,
       .exchange-grid,
       .charter-grid {
         grid-template-columns: 1fr;
@@ -1022,41 +990,6 @@
                 son usage et son énergie. On y circule doucement, selon la saison et les besoins.
               </p>
             </div>
-          </div>
-
-          <div class="grid terrain-grid">
-            <!-- MODIFIER ICI : les textes des 4 terrains -->
-            <article class="terrain-card">
-              <div>
-                <span class="terrain-number">1</span>
-                <h3>Le Cœur</h3>
-              </div>
-              <p>Abri, cuisine, grandes tablées et vie commune. C'est le foyer des repas, des discussions et des coups de main spontanés.</p>
-            </article>
-
-            <article class="terrain-card">
-              <div>
-                <span class="terrain-number">2</span>
-                <h3>Le Havre</h3>
-              </div>
-              <p>Le chalet du repos, de la nuit et de la régénération. On y entre avec délicatesse, comme dans une respiration plus basse.</p>
-            </article>
-
-            <article class="terrain-card">
-              <div>
-                <span class="terrain-number">3</span>
-                <h3>La Clairière</h3>
-              </div>
-              <p>Campement estival, de juin à septembre, avec une grande tente et l'esprit des nuits dehors quand la saison le permet.</p>
-            </article>
-
-            <article class="terrain-card">
-              <div>
-                <span class="terrain-number">4</span>
-                <h3>Le petit bois</h3>
-              </div>
-              <p>La fraîcheur des grands arbres et de la rivière, pour se poser à l'ombre et écouter le lieu respirer.</p>
-            </article>
           </div>
         </div>
       </section>
@@ -1159,45 +1092,6 @@
         </div>
       </section>
 
-      <section class="section" id="echanges">
-        <div class="container">
-          <div class="section-heading">
-            <div>
-              <p class="section-kicker">L'Ardoise des Échanges</p>
-              <h2>Pas de prix, mais des gestes.</h2>
-            </div>
-            <p>
-              Le lieu vit par le don, l'entraide et l'attention. Cette ardoise peut changer
-              au fil des saisons, des récoltes, des chantiers et des envies.
-            </p>
-          </div>
-
-          <div class="grid exchange-grid">
-            <article class="exchange-card">
-              <!-- MODIFIER ICI : besoins actuels du lieu -->
-              <h3>La Terre demande...</h3>
-              <ul class="exchange-list">
-                <li>Des bras pour les petits chantiers et les bricolages doux.</li>
-                <li>Des bocaux, graines, outils manuels ou matériaux de récupération.</li>
-                <li>Un coup de main au potager, au bois, aux chemins et aux rangements.</li>
-                <li>Des idées simples pour rendre le lieu plus autonome.</li>
-              </ul>
-            </article>
-
-            <article class="exchange-card">
-              <!-- MODIFIER ICI : ce que le lieu offre -->
-              <h3>La Terre offre...</h3>
-              <ul class="exchange-list">
-                <li>Un espace de déconnexion, loin du rythme urbain et des injonctions.</li>
-                <li>Des repas partagés, des tablées longues et des cafés au soleil.</li>
-                <li>Des cueillettes, des pommes, des herbes, des saisons à observer.</li>
-                <li>Des ateliers guitare, des savoir-faire et des conversations lentes.</li>
-              </ul>
-            </article>
-          </div>
-        </div>
-      </section>
-
       <section class="section" id="activites">
         <div class="container">
           <div class="section-heading">
@@ -1236,39 +1130,6 @@
               </div>
             </div>
           </details>
-        </div>
-      </section>
-
-      <section class="section" id="charte">
-        <div class="container">
-          <div class="section-heading">
-            <div>
-              <p class="section-kicker">Les Lois de la Clairière</p>
-              <h2>Une liberté qui prend soin.</h2>
-            </div>
-            <p>
-              La charte garde l'esprit du lieu lisible : chacun est bienvenu dans la mesure où
-              sa présence respecte les hôtes, le vivant et le rythme commun.
-            </p>
-          </div>
-
-          <div class="grid charter-grid">
-            <!-- MODIFIER ICI : règles et formulation de la charte -->
-            <article class="charter-card">
-              <h3>Un lieu vivant, pas un service</h3>
-              <p>On vient quand Gilles et Ludivine sont là, le phare allumé. Ce n'est pas un gîte, ni une appli — c'est une maison habitée, une forêt qui respire, une table où l'on pose les sacs sans compter les heures.</p>
-            </article>
-
-            <article class="charter-card">
-              <h3>Légèreté sur la terre</h3>
-              <p>On marche doucement ici. On repart avec ses déchets, on ménage l'eau de la rivière, on laisse les zones d'ombre à ceux qui en ont besoin — les bêtes, les plantes, le silence. Chaque passage laisse l'endroit un peu plus intact qu'à l'arrivée.</p>
-            </article>
-
-            <article class="charter-card">
-              <h3>Hors système, ici on réinvente.</h3>
-              <p>Sois un artiste, ou un rigolo, ou un courageux, ou un ingénieux, ou un généreux, ou un cuisinier — ou un autre talent encore. Tout est bienvenu sauf l'indifférence.</p>
-            </article>
-          </div>
         </div>
       </section>
 
@@ -1618,8 +1479,6 @@
     function updateVisitPanel() {
       const selectedDate = state.selectedDateKey ? new Date(`${state.selectedDateKey}T12:00:00`) : null;
       const selectedIsPresent = state.selectedDateKey && state.presenceDays.includes(state.selectedDateKey);
-      // Le formulaire est accessible dès qu'une case verte est choisie,
-      // que le phare soit allumé ou éteint.
       const canSubmit = Boolean(selectedIsPresent);
 
       if (!selectedDate) {
@@ -1643,7 +1502,6 @@
     async function handleVisitSubmit(event) {
       event.preventDefault();
 
-      // On vérifie uniquement que le jour est ouvert (case verte), pas l'état du phare.
       if (!state.selectedDateKey || !state.presenceDays.includes(state.selectedDateKey)) {
         elements.formMessage.textContent = "Choisis d'abord une date verte.";
         return;
